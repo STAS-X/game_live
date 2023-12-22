@@ -51,7 +51,7 @@ div.fieldCell[aria-value='-1']::before {
 		filter: none;
 	}
 	to {
-		filter: contrast(80%) sepia(60%);
+		filter: contrast(160%) brightness(20%);
 	}
 }
 

@@ -18,6 +18,15 @@
 		<script type="module" src="scripts/live_game.js"></script>
 	</head>
 	<body>
+		<script>
+			function detectMobileDevice() {
+				const isMobile = window.matchMedia;
+				if (!isMobile) return false;
+
+				const device = isMobile('(pointer:coarse)');
+				return device.matches;
+			};
+		</script>
 		<main>
 			<section class="game__header"><span class="headerloader">ИГРА ЖИЗНИ</span></section>
 			<section id="fields_container" class="game__field">
@@ -40,11 +49,11 @@
 				<div class="footer_container">
 					<div id="input1">
 						<label for="fields_timer">Задержка(мс):</label>
-						<input id="fields_timer" type="number" min="500" max="5000" step="500" value="1000" onfocus="this.blur()" />
+						<input id="fields_timer" type="number" min="500" max="5000" step="500" value="1000" onfocus="if (!detectMobileDevice()) this.blur()" />
 					</div>
 					<div id="input2">
 						<label for="fields_timer">Колонки(шт):</label>
-						<input id="fields_counter" type="number" min="10" max="100" step="10" value="10" onfocus="this.blur()" />
+						<input id="fields_counter" type="number" min="10" max="100" step="10" value="10" onfocus="if (!detectMobileDevice()) this.blur()" />
 					</div>
 				</div>
 				<div class="footer_container">
@@ -58,5 +67,6 @@
 			<div id="gameover" class="finishoverlay"><span class="gameover"></span></div>
 			<div id="loader" class="overlay"><span class="loader"></span></div>
 		</main>
+
 	</body>
 </html>

@@ -129,8 +129,20 @@ function update_settings_game() {
 
 	GameSettings.current.components.loader.classList.toggle('open');
 	// Устанавливаем текущие настройки игры
-	GameSettings.current.fieldsPerRowCount = parseInt(GameSettings.current.components.counter.value);
-	GameSettings.current.timeSpan = parseInt(GameSettings.current.components.timer.value);
+	const counterValue = !isNaN(GameSettings.current.components.counter.value)
+		? parseInt(GameSettings.current.components.counter.value) >= 10 &&
+		  parseInt(GameSettings.current.components.counter.value) <= 100
+			? Math.floor(parseInt(GameSettings.current.components.counter.value)/10)*10
+			: 10
+		: 10;
+	const timerValue = !isNaN(GameSettings.current.components.timer.value)
+		? parseInt(GameSettings.current.components.timer.value) >= 500 &&
+		  parseInt(GameSettings.current.components.timer.value) <= 5000
+			? Math.floor(parseInt(GameSettings.current.components.timer.value) / 10) * 10
+			: 1000
+		: 1000;
+	GameSettings.current.fieldsPerRowCount = counterValue; //parseInt(GameSettings.current.components.counter.value);
+	GameSettings.current.timeSpan = timerValue; //parseInt(GameSettings.current.components.timer.value);
 
 	document.documentElement.style.setProperty('--animateVelocity', `${GameSettings.current.timeSpan}ms`);
 	document.documentElement.style.setProperty('--stepOpacity', 0);
