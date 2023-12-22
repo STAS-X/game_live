@@ -1,0 +1,90 @@
+
+div.fieldCell {
+	/*height: auto;*/
+	position: relative;
+	background-color: antiquewhite;
+	outline: 1px solid aqua;
+}
+
+.withAnimation {
+	/*transition: all 5s;*/
+	animation: 1.5s ease-in 0s 1 normal both running filterHoverCell;
+}
+
+div.fieldCell::before {
+	content: '';
+	display: block;
+	opacity: 0;
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	width: 0%;
+	height: 0%;
+	background: var(--circleRadialWeight);
+}
+
+div.fieldCell:not([aria-value='1']) {
+	background-color: antiquewhite;
+}
+
+div.fieldCell[aria-value='1']::before {
+	opacity: 1;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100%;
+}
+
+/* Анимация для вновь появившихся и исчезнувших клеток */
+div.fieldCell[aria-value='2']::before {
+	opacity: 1;
+	animation: 0.35s ease-in 0.05s 1 normal forwards running liveCell;
+}
+
+div.fieldCell[aria-value='-1']::before {
+	opacity: 1;
+	animation: 0.35s ease-in 0.05s 1 reverse forwards running liveCell;
+}
+
+@keyframes filterHoverCell {
+	from {
+		filter: none;
+	}
+	to {
+		filter: contrast(80%) sepia(60%);
+	}
+}
+
+@keyframes liveCell {
+	from {
+		left: 50%;
+		top: 50%;
+		width: 0;
+		height: 0;
+	}
+	to {
+		left: 0;
+		top: 0;
+		width: 100%;
+		height: 100%;
+		background: var(--circleRadialWeight);
+	}
+}
+
+@keyframes stepIn {
+	0% {
+		top: 100%;
+	}
+	100% {
+		top: 0;
+	}
+}
+
+@keyframes stepOut {
+	0% {
+		top: 0;
+	}
+	100% {
+		top: -100%;
+	}
+}

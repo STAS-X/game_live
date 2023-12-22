@@ -1,0 +1,41 @@
+.finishoverlay {
+	background: rgb(0 0 0 / 25%);
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	position: fixed;
+	top: 0;
+	bottom: 0;
+	right: 0;
+	left: 0;
+	z-index: -1;
+	opacity: 0;
+	transition: opacity 0.5s, blur 0.5s;
+}
+
+.finishopen {
+	opacity: 1;
+	backdrop-filter: blur(5px);
+	z-index: 10;
+}
+
+.gameover{
+    font-size: 48px;
+    font-weight: bold;
+    letter-spacing: 2px;
+    font-family: Roboto, Helvetica, sans-serif;
+    color: #fff;
+    animation: smokeOut 2s ease-in-out infinite alternate;
+    text-shadow: 0 0 1px white;
+  }
+  .gameover:before {
+    content: "Игра жизни завершена";
+  }
+
+  @keyframes smokeOut {
+    100% {
+      opacity: 0.3;
+      filter: blur(1px);
+      letter-spacing: 10px;
+    }
+  }

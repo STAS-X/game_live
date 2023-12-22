@@ -1,0 +1,17 @@
+{
+	"name": "game_live",
+	"version": "1.0.0",
+	"description": "HTML, CSS",
+	"main": "index.js",
+	"scripts": {
+		"test": "echo \"Error: no test specified\" && exit 1",
+		"serve": "npx live-server --open=. --wait=500"
+	},
+	"keywords": [],
+	"author": "",
+	"license": "ISC",
+	"dependencies": {
+		"http-server": "^14.1.1",
+		"live-server": "^1.2.2"
+	}
+}
