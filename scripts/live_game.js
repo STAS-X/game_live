@@ -16,6 +16,7 @@ const WorkerMessages = {
 	reconfig: 'GameReconfig',
 	idle: 'GameIdle',
 	close: 'CloseWorker',
+	changeAria: 'ChangeAriaStatus',
 };
 
 // Входящие сообщения от Worker
@@ -84,6 +85,7 @@ export const GameSettings = {
 		initializeGameSettings: update_settings_game, // Начальная функция ждя загрузки исходных настроек игры
 		startLiveGame: start_game, // Функция начала игры
 		resumeLiveGame: resume_game, // Функция приостановки и возобновления игры
+		changeCellAriaValue,
 	},
 };
 
@@ -132,7 +134,7 @@ function update_settings_game() {
 	const counterValue = !isNaN(GameSettings.current.components.counter.value)
 		? parseInt(GameSettings.current.components.counter.value) >= 10 &&
 		  parseInt(GameSettings.current.components.counter.value) <= 100
-			? Math.floor(parseInt(GameSettings.current.components.counter.value)/10)*10
+			? Math.floor(parseInt(GameSettings.current.components.counter.value) / 10) * 10
 			: 10
 		: 10;
 	const timerValue = !isNaN(GameSettings.current.components.timer.value)
@@ -232,7 +234,7 @@ function start_calculation() {
 function end_game() {
 	if (GameSettings.current.currentStatus === GameStatus['play']) {
 		clearSettingsGame();
-		document.documentElement.style.setProperty('--stepOpacity', 0);
+		setTimeout(() => document.documentElement.style.setProperty('--stepOpacity', 0), 0);
 		GameSettings.current.components.gameover.classList.toggle('finishopen');
 		setTimeout(() => GameSettings.current.components.gameover.classList.toggle('finishopen'), 6000);
 	}
@@ -246,7 +248,6 @@ function resume_game() {
 			message: WorkerMessages['pause'],
 		});
 		updateStepNumber(true);
-		document.documentElement.style.setProperty('--stepOpacity', 0);
 		document.querySelector('input.button__pause').value = 'Продолжить';
 	} else if (GameSettings.current.currentStatus === GameStatus['pause']) {
 		start_game(false);
@@ -311,6 +312,20 @@ function updateStepNumber(isreset = false) {
 			});
 		}
 		document.querySelector('span#game_step').innerText = GameSettings.current.currentStep;
+	}
+}
+
+// Функция по ручному изменению статуса ячейки поля
+function changeCellAriaValue(div) {
+	if (
+		document.querySelector('span#game_status').innerText === 'перезапуск игры' &&
+		GameSettings.current.currentStatus === GameStatus['reconfig']
+	) {
+		if (div) {
+			const cellValue = div.getAttribute('aria-value');
+			div.setAttribute('aria-value', cellValue === '0' ? '2' : '-1');
+			worker.postMessage({ message: WorkerMessages['changeAria'], params: { cellId: div.id } });
+		}
 	}
 }
 

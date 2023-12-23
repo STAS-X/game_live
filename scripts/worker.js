@@ -56,19 +56,29 @@ const IncommingMessages = {
 	reconfig: 'GameReconfig',
 	idle: 'GameIdle',
 	close: 'CloseWorker',
+	changeAria: 'ChangeAriaStatus'
 };
 
 onmessage = async (event) => {
 	const { message, params } = event.data;
 
-	const { rows, cellwidth, status, step } = params || {};
+	const { rows, cellwidth, status, step, cellId } = params || {};
 
 	try {
 		switch (message) {
+			// Блок приема сообщения об изменении текущего поля игры
+			case IncommingMessages['changeAria']:
+				const curCol = cellId.split('_')[0];
+				const curRow = cellId.split('_')[1];
+				let newData = GameKeeper.storage.firstFrameOfGame.get(curRow - 1);
+				newData[curCol] = newData[curCol] === 1 ? 0 : 1;
+				GameKeeper.storage.firstFrameOfGame.set(curRow - 1, [...newData]);
+
+				break;
 			// Блок приема сообщения о запуске новой игры
 			case IncommingMessages['play']:
 				if (status === GameStatus['idle']) {
-					GameKeeper.storage.history=[];
+					GameKeeper.storage.history = [];
 					await calcWithPromises(synchronizeGameSteps(rows, GameKeeper.storage.firstFrameOfGame));
 				}
 				if (status !== GameStatus['play'])

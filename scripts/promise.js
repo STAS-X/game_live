@@ -181,7 +181,11 @@ const generateDivsMap =
 				: currentRow[row];
 
 			fieldsResult = fieldsResult.concat(
-				`<div id="${''.concat(row + 1, '_', column + 1)}" class="${divTemplateClass}" ${
+				`<div id="${''.concat(
+					row + 1,
+					'_',
+					column + 1
+				)}" onclick="gameSettings.functions.changeCellAriaValue(this);" class="${divTemplateClass}" ${
 					count < 70
 						? "onMouseEnter=\"this.classList.toggle('withAnimation');setTimeout(()=>this.classList.toggle('withAnimation'),500);\""
 						: ''
@@ -242,7 +246,6 @@ function generateStartSamplesForField(maxFieldRows) {
 				GameKeeper.samples.startSamples.push({ ...sample });
 		} else GameKeeper.samples.startSamples.push({ ...sample });
 	}
-	console.log(GameKeeper.samples.startSamples, 'get samples');
 }
 
 // Преобразование шаблонных заполнителей элементов игры в клетки на поле

@@ -52,7 +52,7 @@ div.status_container div#step {
 
 div.status_container div#status span {
 	max-height: 32px;
-	white-space: break-word;
+	white-space: break-spaces;
 	overflow-y: auto;
 }
 
@@ -126,4 +126,3 @@ div.status_container {
 	justify-content: space-around;
 	align-items: center;
 }
-
