@@ -36,7 +36,11 @@ const workerOnMessage = async (e) => {
 		case IncommingMessages['updateStatus']:
 			const { status, errorMessage, statusMessage } = params;
 			// Если мы хотим сбросить статус текущий игры на нейтральный запускаем процедуру завершения игры
-			if (GameSettings.current.currentStatus === GameStatus['play'] && status === GameStatus['idle']) end_game();
+			if (
+				GameSettings.current.currentStatus === GameStatus['play'] &&
+				status === GameStatus['idle']
+			)
+				end_game();
 			if (status === GameStatus['idle']) {
 				if (errorMessage || statusMessage) {
 					console.warn(errorMessage || statusMessage, 'game is over');
@@ -53,7 +57,11 @@ const workerOnMessage = async (e) => {
 				GameSettings.current.currentStep++;
 				GameSettings.global.calculatingStep--;
 				updateStepNumber();
-			} else setTimeout(() => GameSettings.current.components.loader.classList.toggle('open'), 250);
+			} else
+				setTimeout(
+					() => GameSettings.current.components.loader.classList.toggle('open'),
+					250
+				);
 	}
 };
 
@@ -65,6 +73,7 @@ export const GameSettings = {
 		currentTimerId: -1, // Текущий timerId для зацикливания основной процедуры обработчика игры до ее принудительной остановки или завершения
 		startTime: 0, // Время начала игры, для подсчета общего времени продолжительности
 		timerId: -1, // Текущий timerId для обновления
+		isGameOver: true // Статус завершения игры
 	},
 	current: {
 		fieldsPerRowCount: 10, // Текущее количество строк и столбцов на поле игры
@@ -90,7 +99,8 @@ export const GameSettings = {
 };
 
 // Получаем исходные объекты HTML страницы для последующего использования в игре
-GameSettings.current.components.counter = document.querySelector('#fields_counter');
+GameSettings.current.components.counter =
+	document.querySelector('#fields_counter');
 if (!GameSettings.current.components.counter) {
 	errorToConsole('Fieds counter input element not found!');
 }
@@ -100,7 +110,8 @@ if (!GameSettings.current.components.timer) {
 	errorToConsole('Fieds timer input element not found!');
 }
 
-GameSettings.current.components.fieldContainer = document.querySelector('#fields_container');
+GameSettings.current.components.fieldContainer =
+	document.querySelector('#fields_container');
 if (!GameSettings.current.components.fieldContainer) {
 	errorToConsole('Fieds container not found!');
 }
@@ -134,20 +145,28 @@ function update_settings_game() {
 	const counterValue = !isNaN(GameSettings.current.components.counter.value)
 		? parseInt(GameSettings.current.components.counter.value) >= 10 &&
 		  parseInt(GameSettings.current.components.counter.value) <= 100
-			? Math.floor(parseInt(GameSettings.current.components.counter.value) / 10) * 10
+			? Math.floor(
+					parseInt(GameSettings.current.components.counter.value) / 10
+			  ) * 10
 			: 10
 		: 10;
 	const timerValue = !isNaN(GameSettings.current.components.timer.value)
 		? parseInt(GameSettings.current.components.timer.value) >= 500 &&
 		  parseInt(GameSettings.current.components.timer.value) <= 5000
-			? Math.floor(parseInt(GameSettings.current.components.timer.value) / 10) * 10
+			? Math.floor(parseInt(GameSettings.current.components.timer.value) / 10) *
+			  10
 			: 1000
 		: 1000;
 	GameSettings.current.fieldsPerRowCount = counterValue; //parseInt(GameSettings.current.components.counter.value);
 	GameSettings.current.timeSpan = timerValue; //parseInt(GameSettings.current.components.timer.value);
+	GameSettings.global.isGameOver = false;
 
-	document.documentElement.style.setProperty('--animateVelocity', `${GameSettings.current.timeSpan}ms`);
+	document.documentElement.style.setProperty(
+		'--animateVelocity',
+		`${GameSettings.current.timeSpan}ms`
+	);
 	document.documentElement.style.setProperty('--stepOpacity', 0);
+	document.documentElement.style.setProperty('--cellCursor', 'pointer');
 
 	clearSettingsGame();
 
@@ -155,20 +174,23 @@ function update_settings_game() {
 	GameSettings.current.components.fieldContainer.innerHTML = '';
 
 	GameSettings.current.cellWidth = `${parseFloat(
-		GameSettings.current.components.fieldContainer.getBoundingClientRect().height /
-			GameSettings.current.fieldsPerRowCount
+		GameSettings.current.components.fieldContainer.getBoundingClientRect()
+			.height / GameSettings.current.fieldsPerRowCount
 	).toFixed(2)}px`;
 
 	GameSettings.current.components.mainContainer.style.width = `${
 		parseFloat(
-			GameSettings.current.components.fieldContainer.getBoundingClientRect().height /
-				GameSettings.current.fieldsPerRowCount
+			GameSettings.current.components.fieldContainer.getBoundingClientRect()
+				.height / GameSettings.current.fieldsPerRowCount
 		).toFixed(2) * GameSettings.current.fieldsPerRowCount
 	}px`;
 
 	// Округляем высоту игрового поля
 	GameSettings.current.components.fieldContainer.style.height = `${
-		Math.floor(GameSettings.current.components.fieldContainer.getBoundingClientRect().height / 10) * 10
+		Math.floor(
+			GameSettings.current.components.fieldContainer.getBoundingClientRect()
+				.height / 10
+		) * 10
 	}px`;
 
 	worker.postMessage({
@@ -196,6 +218,7 @@ function clearSettingsGame(isClearAll) {
 		GameSettings.global.calculatingStep = 0;
 		GameSettings.current.currentStep = 0;
 		GameSettings.current.currentStatus = GameStatus['idle'];
+		document.documentElement.style.setProperty('--cellCursor', 'default');
 		updateStepNumber(true);
 		updateTimer();
 	}
@@ -208,8 +231,12 @@ function start_game(isrestart = true) {
 	// Запускаем неотложный пересчет поля игры для моментального запуска
 	start_calculation();
 	// Запускаем пересчет поля игры в цикле с периодом повторения timeSpan (мс)
-	GameSettings.global.currentTimerId = setInterval(start_calculation, GameSettings.current.timeSpan);
+	GameSettings.global.currentTimerId = setInterval(
+		start_calculation,
+		GameSettings.current.timeSpan
+	);
 	GameSettings.global.timerId = setInterval(updateTimer, 1000);
+	GameSettings.global.isGameOver = false;
 }
 
 // Функция непосредственного расчета и визуализации текущего шага игры
@@ -234,9 +261,14 @@ function start_calculation() {
 function end_game() {
 	if (GameSettings.current.currentStatus === GameStatus['play']) {
 		clearSettingsGame();
-		setTimeout(() => document.documentElement.style.setProperty('--stepOpacity', 0), 0);
+		document.documentElement.style.setProperty('--stepOpacity', 0)
+		GameSettings.global.isGameOver = true;
 		GameSettings.current.components.gameover.classList.toggle('finishopen');
-		setTimeout(() => GameSettings.current.components.gameover.classList.toggle('finishopen'), 6000);
+		setTimeout(
+			() =>
+				GameSettings.current.components.gameover.classList.toggle('finishopen'),
+			6000
+		);
 	}
 }
 
@@ -261,9 +293,9 @@ function updateTimer() {
 	const hours = Math.floor(spanTime / 1000 / 3600);
 	const mins = Math.floor((spanTime / 1000 - hours * 3600) / 60);
 	const sec = Math.floor(spanTime / 1000 - hours * 3600 - mins * 60);
-	document.querySelector('span#game_timer').innerText = `${hours < 10 ? '0' + hours : hours}:${
-		mins < 10 ? '0' + mins : mins
-	}:${sec < 10 ? '0' + sec : sec}`;
+	document.querySelector('span#game_timer').innerText = `${
+		hours < 10 ? '0' + hours : hours
+	}:${mins < 10 ? '0' + mins : mins}:${sec < 10 ? '0' + sec : sec}`;
 }
 
 // Функция отображения текущего статуса игры при его изменении
@@ -271,8 +303,10 @@ function updateStatus(status, extraMessage, errorMessage) {
 	switch (status) {
 		case GameStatus['play']:
 			if (GameSettings.current.currentStatus === GameStatus['pause']) {
-				document.querySelector('span#game_status').innerText = 'игра продолжена';
-			} else document.querySelector('span#game_status').innerText = 'игра начата';
+				document.querySelector('span#game_status').innerText =
+					'игра продолжена';
+			} else
+				document.querySelector('span#game_status').innerText = 'игра начата';
 			break;
 		case GameStatus['pause']:
 			document.querySelector('span#game_status').innerText = 'игра остановлена';
@@ -287,8 +321,11 @@ function updateStatus(status, extraMessage, errorMessage) {
 			} else if (errorMessage) {
 				document.querySelector('span#game_status').innerText =
 					'игра завершена по причине ошибки на сервере (см. консоль)';
-				errorToConsole(`Игра завершена в результате ошибки на сервере: ${errorMessage}`);
-			} else document.querySelector('span#game_status').innerText = 'режим ожидания';
+				errorToConsole(
+					`Игра завершена в результате ошибки на сервере: ${errorMessage}`
+				);
+			} else
+				document.querySelector('span#game_status').innerText = 'режим ожидания';
 	}
 }
 
@@ -299,32 +336,55 @@ function updateStepNumber(isreset = false) {
 		root.style.setProperty('--stepIn', 0);
 		root.style.setProperty('--stepOut', 0);
 		root.style.setProperty('--stepOpacity', 0);
-	} else {
+	} else if (GameSettings.current.currentStatus === GameStatus['play']) {
 		if (GameSettings.current.fieldsPerRowCount < 50) {
-			root.style.setProperty('--stepIn', `'${GameSettings.current.currentStep}'`);
-			root.style.setProperty('--stepOut', `'${GameSettings.current.currentStep - 1}'`);
+			root.style.setProperty(
+				'--stepIn',
+				`'${GameSettings.current.currentStep}'`
+			);
+			root.style.setProperty(
+				'--stepOut',
+				`'${GameSettings.current.currentStep - 1}'`
+			);
 			root.style.setProperty('--stepOpacity', 1);
 			document.getAnimations().forEach((animate) => {
-				if (animate.animationName === 'stepOut' || animate.animationName === 'stepIn') {
+				if (
+					animate.animationName === 'stepOut' ||
+					animate.animationName === 'stepIn'
+				) {
 					animate.cancel();
 					animate.play();
 				}
 			});
 		}
-		document.querySelector('span#game_step').innerText = GameSettings.current.currentStep;
+		document.querySelector('span#game_step').innerText =
+			GameSettings.current.currentStep;
 	}
 }
 
 // Функция по ручному изменению статуса ячейки поля
-function changeCellAriaValue(div) {
+function changeCellAriaValue({target,buttons}) {
+
+	if (GameSettings.current.fieldsPerRowCount < 70) {
+		target.classList.toggle('withAnimation');
+		setTimeout(() => target.classList.toggle('withAnimation'), 500);
+	}
+
 	if (
-		document.querySelector('span#game_status').innerText === 'перезапуск игры' &&
-		GameSettings.current.currentStatus === GameStatus['reconfig']
+		(GameSettings.current.currentStatus === GameStatus['idle'] ||
+			GameSettings.current.currentStatus === GameStatus['reconfig']) &&
+		!GameSettings.global.isGameOver && buttons === 1
 	) {
-		if (div) {
-			const cellValue = div.getAttribute('aria-value');
-			div.setAttribute('aria-value', cellValue === '0' ? '2' : '-1');
-			worker.postMessage({ message: WorkerMessages['changeAria'], params: { cellId: div.id } });
+		if (target) {
+			const cellValue = target.getAttribute('aria-value');
+			target.setAttribute(
+				'aria-value',
+				cellValue === '0' || cellValue === '-1' ? '2' : '-1'
+			);
+			worker.postMessage({
+				message: WorkerMessages['changeAria'],
+				params: { cellId: target.id },
+			});
 		}
 	}
 }
@@ -342,7 +402,10 @@ async function injectedDivToDomNode(divsData) {
 				await sleep(50);
 			}
 			currentPartId++;
-			GameSettings.current.components.fieldContainer.insertAdjacentHTML('beforeend', divsArray[partialId]);
+			GameSettings.current.components.fieldContainer.insertAdjacentHTML(
+				'beforeend',
+				divsArray[partialId]
+			);
 			resolve('injection completed');
 		});
 	};
@@ -356,7 +419,9 @@ async function injectedDivToDomNode(divsData) {
 		promises.push(addPartialDivsToDom(i));
 	}
 
-	return Promise.all(promises).then(() => console.log('divs injected to field container'));
+	return Promise.all(promises).then(() =>
+		console.log('divs injected to field container')
+	);
 }
 
 window.gameSettings = GameSettings;

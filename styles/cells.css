@@ -4,6 +4,7 @@ div.fieldCell {
 	position: relative;
 	background-color: antiquewhite;
 	outline: 1px solid aqua;
+	cursor: var(--cellCursor);
 }
 
 .withAnimation {

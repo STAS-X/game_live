@@ -185,11 +185,7 @@ const generateDivsMap =
 					row + 1,
 					'_',
 					column + 1
-				)}" onclick="gameSettings.functions.changeCellAriaValue(this);" class="${divTemplateClass}" ${
-					count < 70
-						? "onMouseEnter=\"this.classList.toggle('withAnimation');setTimeout(()=>this.classList.toggle('withAnimation'),500);\""
-						: ''
-				} aria-value="${newValue}" style="width: ${cellwidth}; height: ${cellwidth}"></div>`
+				)}" onMouseEnter="gameSettings.functions.changeCellAriaValue(event);" class="${divTemplateClass}" aria-value="${newValue}" style="width: ${cellwidth}; height: ${cellwidth}"></div>`
 			);
 		}
 

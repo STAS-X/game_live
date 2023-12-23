@@ -68,11 +68,13 @@ onmessage = async (event) => {
 		switch (message) {
 			// Блок приема сообщения об изменении текущего поля игры
 			case IncommingMessages['changeAria']:
+				console.log(cellId,'change current cell by id');
 				const curCol = cellId.split('_')[0];
 				const curRow = cellId.split('_')[1];
 				let newData = GameKeeper.storage.firstFrameOfGame.get(curRow - 1);
-				newData[curCol] = newData[curCol] === 1 ? 0 : 1;
+				newData[curCol-1] = newData[curCol-1] === 1 ? 0 : 1;
 				GameKeeper.storage.firstFrameOfGame.set(curRow - 1, [...newData]);
+				console.log(GameKeeper.storage.firstFrameOfGame, 'updatetd field');
 
 				break;
 			// Блок приема сообщения о запуске новой игры
