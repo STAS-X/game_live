@@ -108,6 +108,7 @@ section.game__field {
 section.game__header {
 	display: flex;
 	justify-content: center;
+	width: 100%;
 }
 
 section.game__footer {
