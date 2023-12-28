@@ -175,13 +175,13 @@ function update_settings_game() {
 
 	GameSettings.current.cellWidth = `${parseFloat(
 		GameSettings.current.components.fieldContainer.getBoundingClientRect()
-			.height / GameSettings.current.fieldsPerRowCount
+			.width / GameSettings.current.fieldsPerRowCount
 	).toFixed(2)}px`;
 
 	GameSettings.current.components.mainContainer.style.width = `${
 		parseFloat(
 			GameSettings.current.components.fieldContainer.getBoundingClientRect()
-				.height / GameSettings.current.fieldsPerRowCount
+				.width / GameSettings.current.fieldsPerRowCount
 		).toFixed(2) * GameSettings.current.fieldsPerRowCount
 	}px`;
 
@@ -189,7 +189,7 @@ function update_settings_game() {
 	GameSettings.current.components.fieldContainer.style.height = `${
 		Math.floor(
 			GameSettings.current.components.fieldContainer.getBoundingClientRect()
-				.height / 10
+				.width / 10
 		) * 10
 	}px`;
 
