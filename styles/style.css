@@ -22,10 +22,9 @@ body {
 }
 
 main {
-	width: min(600px, 80vw);
+	width: min(600px, max(480px,80vw));
 	max-width: 1200px;
 	height: fit-content;
-	min-height: 80vh;
 	align-self: center;
 	margin: auto;
 	background-color: aliceblue;
